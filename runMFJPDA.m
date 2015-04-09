@@ -7,6 +7,7 @@ function stateInfo=runMFJPDA(sequence,options,outdir)
 
 % addpath(genpath('/home/amilan/research/projects/bmtt-dev/scripts')) % tools
 trackerName = 'MFJPDA';
+addpath(genpath('.'));
 
 resDir = fullfile(getResDir(),trackerName,'data',filesep);
 
@@ -62,10 +63,10 @@ T=1;% Temporal sampling rate
 
 
 % addpath('C:\gurobi563\win64\matlab\');
-addpath('/home/amilan/software/gurobi603/linux64/matlab/');
-addpath(genpath('clustering'))
-addpath('motutils');
-addpath('Bounding box estimation');
+% addpath('/home/amilan/software/gurobi603/linux64/matlab/');
+% addpath(genpath('clustering'))
+% addpath('motutils');
+% addpath('Bounding box estimation');
 
 % pwdd= cd('../..');
 % pwds=[pwd,'\Codes\Bounding box estimation'];
@@ -374,7 +375,7 @@ for seq = allseq
     dlmwrite(rtFile,runtime);
     
     % write results
-    resFile = fullfile(outdir,[seqName,'.txt']);
+    resFile = fullfile(outdir,[seqName,'.txt'])
 
 %     all_mot
     convertSTInfoToTXT(stateInfo, resFile);
