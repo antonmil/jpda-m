@@ -6,7 +6,7 @@ function options = parseOptions(options)
     
 
 try
-    if isstr(options)
+    if ischar(options)
         options=readConfig(options);
     end
     

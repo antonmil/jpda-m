@@ -1,4 +1,4 @@
-function stateInfo=runMFJPDA(sequence,options,outdir)
+function [metrics2d, metrics3d, stateInfo]=runMFJPDA(sequence,options,outdir)
 
 % close all
 % clear all
@@ -12,8 +12,8 @@ addpath(genpath('.'));
 resDir = fullfile(getResDir(),trackerName,'data',filesep);
 
 
-if ~nargin, sequence=[]; options=[]; outdir=resDir; end
-if nargin==1, options=[]; outdir=resDir; end
+if ~nargin, sequence=[]; options='config/default.ini'; outdir=resDir; end
+if nargin==1, options='config/default.ini'; outdir=resDir; end
 if nargin==2, outdir=resDir; end
 options = parseOptions(options);
 
@@ -375,11 +375,33 @@ for seq = allseq
     dlmwrite(rtFile,runtime);
     
     % write results
-    resFile = fullfile(outdir,[seqName,'.txt'])
+    resFile = fullfile(outdir,[seqName,'.txt']);
 
 %     all_mot
     convertSTInfoToTXT(stateInfo, resFile);
-%     writeResults(stateInfo,resFile);        
+%     writeResults(stateInfo,resFile);
+
+    metrics2d=zeros(1,14);
+    metrics3d=zeros(1,14);
+
+    
+
+
+    gtFile = fullfile(GT_address);
+
+    if exist(gtFile,'file');
+        evoptions.eval3d=0;   % only bounding box overlap
+        evoptions.td=0.5;
+
+        gtInfo = convertTXTToStruct(gtFile,seqFolder);
+        gtInfo.frameNums=1:size(gtInfo.Xi,1);
+
+
+        [metrics,~,~]=CLEAR_MOT_HUN(gtInfo,stateInfo,evoptions);
+
+        printMetrics(metrics)
+    end
+
     
     
 end
