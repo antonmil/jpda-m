@@ -1,4 +1,4 @@
-function param = setOptions(options)
+function param = setOptions(options,fR)
 
 param.Prun_Thre = 0.9999999;
 param.tret = 15;
@@ -13,12 +13,17 @@ if isempty(options)
 end
 
 param.Prun_Thre = options.Parameters.Prun_Thre;
-param.tret = round(options.Parameters.tret);
-param.Term_Frame = round(options.Parameters.Term_Frame);
+param.tret = round(options.Parameters.tret*fR);
+param.Term_Frame = round(options.Parameters.Term_Frame*fR);
 
 param.PD = min(options.Parameters.PD,1); param.PD=max(0.5,param.PD);
 param.q1 = options.Parameters.q1;
 param.Mcov = options.Parameters.Mcov;
+
+param.Gatesq = options.Parameters.Gatesq;
+param.FPPI = options.Parameters.FPPI;
+param.Upos=options.Parameters.Upos; % uncertainty in initial position
+param.Uvel=options.Parameters.Uvel; % uncertainty in initial velocity
 
 param.MF = options.Parameters.MF;
 param.m = options.Parameters.m;

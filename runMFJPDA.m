@@ -4,6 +4,10 @@ function [metrics2d, metrics3d, stateInfo]=runMFJPDA(sequence,options,outdir)
 % clear all
 % clc
 
+metrics2d=zeros(1,14);
+metrics3d=zeros(1,14);
+stateInfo=[];
+
 
 % addpath(genpath('/home/amilan/research/projects/bmtt-dev/scripts')) % tools
 trackerName = 'MFJPDA';
@@ -39,27 +43,6 @@ q1=0.5; % The standard deviation of the process noise for the dynamic model 1
 
 Mcov=7;
 
-options.Parameters
-param=setOptions(options); % set custom params
-
-Prun_Thre = param.Prun_Thre;
-tret = param.tret;
-Term_Frame = param.Term_Frame;
-PD = param.PD;
-q1 = param.q1;
-Mcov = param.Mcov;
-
-
-% 1-Prun_Thre
-disp([Prun_Thre,tret,Term_Frame,PD,q1,Mcov])
-
-%%%%
-Gatesq = 30;
-FPPI = 3;
-S_limit=100; % complexity, controls gating size
-Upos=2; % uncertainty in initial position
-Uvel=1; % uncertainty in initial velocity
-T=1;% Temporal sampling rate
 
 
 % addpath('C:\gurobi563\win64\matlab\');
@@ -92,12 +75,48 @@ T=1;% Temporal sampling rate
 % seqFolder='/home/amilan/research/projects/bmtt-data/KITTI-13';
 % seqFolder='/home/amilan/research/projects/bmtt-data/KITTI-17';
 
-for seq = allseq
+nSeq=length(allseq);
+% doparallel=0;
+% 
+% if nSeq>2
+%     doparallel=min(7,nSeq);
+% end
+
+
+% parpool(7)
+
+% parfor ns=1:nSeq
+for ns=1:nSeq
+    seq = allseq(ns);
     [seqName, seqFolder, imgFolder, imgExt, seqLength, dirImages] = ...
         getSeqInfo(seq, dataDir);
     
     fprintf('MF JPDA: %s\n',seqName);
     %%
+
+    fR=getFrameRate(seqName);
+    param=setOptions(options,fR); % set custom params
+
+    Prun_Thre = param.Prun_Thre;
+    tret = param.tret;
+    Term_Frame = param.Term_Frame;
+    PD = param.PD;
+    q1 = param.q1;
+    Mcov = param.Mcov;
+
+
+
+    %%%%
+    Gatesq = param.Gatesq;
+    FPPI = param.FPPI;
+    Upos=param.Upos; % uncertainty in initial position
+    Uvel=param.Uvel; % uncertainty in initial velocity
+    T=1;% Temporal sampling rate    
+    S_limit=50; % complexity, controls gating size
+
+
+    % 1-Prun_Thre
+    disp([Prun_Thre,tret,Term_Frame,PD,q1,Mcov,Gatesq,FPPI,Upos,Uvel])
     
     Image_address=[seqFolder,filesep,'img1'];
     file = dir(Image_address);
@@ -119,11 +138,13 @@ for seq = allseq
     disp('Loading detections...');
     [detFolder, detFile]=getDetInfo(seqName,dataDir);
     detRaw=dlmread(detFile);
+    sceneInfo=[];
     sceneInfo.targetSize = mean(detRaw(:,5))/2;
     sceneInfo.targetAR = mean(detRaw(:,5)./detRaw(:,6));
     sceneInfo.gtAvailable=0;
     sceneInfo.imgHeight = u_image;sceneInfo.imgWidth = v_image;
     sceneInfo.imgFileFormat='%06d.jpg';
+    sceneInfo.imgFolder=[Image_address,filesep];
     sceneInfo.frameNums = 1:num_file-2;
     frameRateFile=[seqFolder,filesep,'framerate.txt'];
     try sceneInfo.frameRate = dlmread(frameRateFile);
@@ -132,7 +153,13 @@ for seq = allseq
     end
     
     
+    percentile=0.25;
+    allsc=sort(detRaw(:,7));
+    Prun_Thre=allsc(round(percentile*length(allsc)));
+%     Prun_Thre=median(detRaw(:,7));
+    disp(Prun_Thre);
     
+    detections=[];
     for t=1:num_file-2
         detections(t).bx=[];
         detections(t).by=[];
@@ -168,7 +195,7 @@ for seq = allseq
         detections(t).ht=[detections(t).ht h];
         detections(t).sc=[detections(t).sc sc];
     end
-    fprintf('... %d detections present\n',numel([detections(:).sc]));
+    fprintf('... %d detections present.',numel([detections(:).sc]));
     
     
     
@@ -266,6 +293,7 @@ for seq = allseq
     %Dynamic Matrices
     % Model 1
     F11=[1 T;0 1];
+    F=[]; Q=[];
     F(:,:,1)=blkdiag(F11,F11); % The transition matrix for the dynamic model 1
     Q11x=q1*[T^3/3 T^2/2;T^2/2 T];
     Q11y=q1*[T^3/3 T^2/2;T^2/2 T];
@@ -390,6 +418,7 @@ for seq = allseq
     gtFile = fullfile(GT_address);
 
     if exist(gtFile,'file');
+        evoptions=[];
         evoptions.eval3d=0;   % only bounding box overlap
         evoptions.td=0.5;
 
@@ -397,11 +426,13 @@ for seq = allseq
         gtInfo.frameNums=1:size(gtInfo.Xi,1);
 
 
-        [metrics,~,~]=CLEAR_MOT_HUN(gtInfo,stateInfo,evoptions);
-
-        printMetrics(metrics)
+        [metrics2d,~,~]=CLEAR_MOT_HUN(gtInfo,stateInfo,evoptions);
+        disp(seqName)
+        printMetrics(metrics2d)
     end
 
-    
+    stateInfo.opt.track3d=0; stateInfo.opt.cutToTA=0;
+    stateInfo.sceneInfo=sceneInfo;
     
 end
+% delete(gcp)

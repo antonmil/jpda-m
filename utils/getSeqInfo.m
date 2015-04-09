@@ -3,7 +3,7 @@ function [seqName, seqFolder, imgFolder, imgExt, F, dirImages] ...
 % construct variables with relevant information about the sequence 'seq'
 % 
 
-    seqName=char(seq)
+    seqName=char(seq);
     seqFolder= [dataDir,seqName,filesep];
     
     imgFolders = dir(fullfile(seqFolder,filesep,'img*'));   
