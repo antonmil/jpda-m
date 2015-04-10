@@ -1,0 +1,4 @@
+syntax: glob
+config/0*
+logs/*
+results/*
