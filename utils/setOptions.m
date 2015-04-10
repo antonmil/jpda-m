@@ -12,11 +12,12 @@ if isempty(options)
     return;
 end
 
+fR=1;
 param.Prun_Thre = options.Parameters.Prun_Thre;
 param.tret = round(options.Parameters.tret*fR);
 param.Term_Frame = round(options.Parameters.Term_Frame*fR);
 
-param.PD = min(options.Parameters.PD,1); param.PD=max(0.5,param.PD);
+param.PD = min(options.Parameters.PD,.99); param.PD=max(0.51,param.PD);
 param.q1 = options.Parameters.q1;
 param.Mcov = options.Parameters.Mcov;
 

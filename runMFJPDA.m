@@ -153,9 +153,9 @@ for ns=1:nSeq
     end
     
     
-    percentile=0.25;
-    allsc=sort(detRaw(:,7));
-    Prun_Thre=allsc(round(percentile*length(allsc)));
+%     percentile=0.25;
+%     allsc=sort(detRaw(:,7));
+%     Prun_Thre=allsc(round(percentile*length(allsc)));
 %     Prun_Thre=median(detRaw(:,7));
     disp(Prun_Thre);
     

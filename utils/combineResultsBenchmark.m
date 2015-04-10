@@ -36,27 +36,64 @@ load(sprintf('%s/%s',resdir,resfiles(1).name));
 
 % allscen=allscen(1:3);
 % maxexper=3;
-global gtInfo
+% global gtInfo
 
 % concat gtInfo
 gtInfoAll=[];
 gtInfoAll.Xi=[];
 allFgt=zeros(1,length(allscen));
 
+    allscenes={
+'TUD-Stadtmitte', ...
+'TUD-Campus', ...
+'PETS09-S2L1', ...
+'ETH-Bahnhof', ...
+'ETH-Sunnyday', ...
+'ETH-Pedcross2', ...
+'ADL-Rundle-6', ...
+'ADL-Rundle-8', ...
+'KITTI-13', ...
+'KITTI-17', ...
+'Venice-2', ...
+        };
+    
 
 % Find out the length of each sequence
 % and concatenate ground truth
 gtInfoSingle=[];
 seqCnt=0;
 fprintf('Concatenate ground truth\n');
-for scen=allscen
+for scen=allscenes
     seqCnt=seqCnt+1;
-    sceneInfo=getSceneInfo(scen);
+%     sceneInfo=getSceneInfo(scen);
     
-    sequence = sceneInfo.sequence;
+%     sequence = sceneInfo.sequence;
+    sequence = char(scen);
     fprintf('\t... %s\n',sequence);
-    gtI = gtInfo;
+%     gtI = gtInfo;
+
+    [seqName, seqFolder, imgFolder, imgExt, seqLength, dirImages] = ...
+        getSeqInfo(sequence, getDataDir);
+
+     gtFile=[seqFolder,filesep,'gt/gt.txt'];
+%     gtI = convertTXTToStruct(gtFile,seqFolder);
     
+        gtInfo=convertTXTToStruct(gtFile);
+        Fgt=seqLength;
+        FE=size(gtInfo.W,1);
+        % if stateInfo shorter, pad with zeros
+        if FE<Fgt
+            missingFrames = FE+1:Fgt;
+            gtInfo.Xi(missingFrames,:)=0;
+            gtInfo.Yi(missingFrames,:)=0;
+            gtInfo.W(missingFrames,:)=0;
+            gtInfo.H(missingFrames,:)=0;
+			gtInfo.X(missingFrames,:)=0;
+			gtInfo.Y(missingFrames,:)=0;
+        end
+        gtInfo.frameNums=1:Fgt;
+        gtI = gtInfo;
+        
     [Fgt,Ngt] = size(gtInfoAll.Xi);
     [FgtI,NgtI] = size(gtI.Xi);
     newFgt = Fgt+1:Fgt+FgtI;
@@ -115,11 +152,13 @@ for r=1:maxexper
         trackerRuntime=0;
         
         % ... and each sequence
+        allscen=1:length(allscenes);
         for scen=allscen
             seqCnt=seqCnt+1;
-            sceneInfo=getSceneInfo(scen);
+%             sceneInfo=getSceneInfo(scen);
             
-            sequence = sceneInfo.sequence;
+%             sequence = sceneInfo.sequence;
+            sequence = char(allscenes(scen));
             fprintf('\t... %s\n',sequence);
             
             stI = infos(scen).stateInfo;
@@ -244,11 +283,8 @@ fprintf('Best: %d\n',mr);
 
 bestmets=[];
 for s=allscen
-    if howToTrack(s)
-        tmp=mets3d(s,:);
-    else
-        tmp=mets2d(s,:);
-    end
+
+    tmp=mets2d(s,:);
     printMetrics(tmp);
     bestmets=[bestmets; tmp];
 end

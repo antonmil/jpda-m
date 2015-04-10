@@ -128,7 +128,7 @@ else
 
   allscensfile=fullfile(confdir,'doscens.txt');
   if ~exist(allscensfile,'file')
-    allscen={
+    allscenes={
 'TUD-Stadtmitte', ...
 'TUD-Campus', ...
 'PETS09-S2L1', ...
@@ -141,13 +141,16 @@ else
 'KITTI-17', ...
 'Venice-2', ...
         };
+    
+    
   else
     fid = fopen(allscensfile);
-    allscen=textscan(fid,'%s','HeaderLines',1);
+    allscenes=textscan(fid,'%s','HeaderLines',1);
     fclose(fid);
-    allscen=allscen{1}';
+    allscenes=allscenes{1}';
   end
-  allscen
+  allscenes
+  allscen=1:11;
 
   learniter=str2double(learniter)
 
@@ -156,7 +159,7 @@ else
   ens=zeros(max(allscen),1);
 
   scenario=0;
-  for scen=allscen
+  for scen=allscenes
       scenario=scenario+1;
 	  fprintf('jobid: %d,   learn iteration %d\n',jobid,learniter);
 	  scensolfile=sprintf('%s/prt_res_%03d-scen%02d.mat',resdir,jobid,scenario)
@@ -166,7 +169,7 @@ else
 	  catch err
 	    fprintf('Could not load result: %s\n',err.message);
 	    [metrics2d, metrics3d, stateInfo]=runMFJPDA(char(scen),conffile);
-	    save(scensolfile,'stateInfo','metrics2d','metrics3d','energies');
+	    save(scensolfile,'stateInfo','metrics2d','metrics3d');
 	  end	  
 
 	  mets2d(scenario,:)=metrics2d;
@@ -189,6 +192,7 @@ else
   end
 end
 
+%%
 % evaluate what we have so far
 % bestexper=combineResultsRemote(settingsDir);
 bestexper=combineResultsBenchmark(settingsDir,maxexper);
