@@ -8,3 +8,7 @@ end
 if exist('d:/','dir')
     dataDir=fullfile('d:','research','projects','bmtt-dev','data',filesep);
 end
+if exist('/home/h3','dir')
+	dataDir='/home/h3/amilan/storage/databases/2DMOT2015/train/';
+end
+

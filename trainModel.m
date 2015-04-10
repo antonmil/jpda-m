@@ -1,8 +1,10 @@
-% function trainModel(jobname,jobid,maxexper)
+function trainModel(jobname,jobid,maxexper)
 
 %% determine paths for config, logs, etc...
 % addpath(genpath('./motutils/'));
 format compact
+addpath(genpath('utils'))
+addpath(genpath('external'))
 
 settingsDir=strsplit(jobname,'-');
 runname=char(settingsDir{1})
@@ -168,7 +170,28 @@ else
 	    load(scensolfile);
 	  catch err
 	    fprintf('Could not load result: %s\n',err.message);
-	    [metrics2d, metrics3d, stateInfo]=runMFJPDA(char(scen),conffile);
+	    try 
+	      [metrics2d, metrics3d, stateInfo]=runMFJPDA(char(scen),conffile);
+	    catch err2
+	    fprintf('Tracking failed: %s\n',err2.message);
+	      metrics2d=zeros(1,14);
+	      metrics3d=zeros(1,14);
+	      
+	      [seqName, seqFolder, imgFolder, imgExt, seqLength, dirImages] = ...
+		  getSeqInfo(scen, getDataDir);
+	      
+	      stateInfo.X = zeros(seqLength, 0);
+	      stateInfo.Y = zeros(seqLength, 0);
+	      stateInfo.Xi = zeros(seqLength, 0);
+	      stateInfo.Yi = zeros(seqLength, 0);
+	      stateInfo.W = zeros(seqLength, 0);
+	      stateInfo.H = zeros(seqLength, 0);
+	      stateInfo.frameNums = 1:seqLength;
+	      stateInfo.opt.track3d=0;stateInfo.opt.cutToTA=0;
+	      stateInfo.sceneInfo = [];
+	      
+    
+	    end
 	    save(scensolfile,'stateInfo','metrics2d','metrics3d');
 	  end	  
 

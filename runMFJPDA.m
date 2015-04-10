@@ -88,6 +88,7 @@ nSeq=length(allseq);
 % parfor ns=1:nSeq
 for ns=1:nSeq
     seq = allseq(ns);
+
     [seqName, seqFolder, imgFolder, imgExt, seqLength, dirImages] = ...
         getSeqInfo(seq, dataDir);
     
@@ -119,9 +120,9 @@ for ns=1:nSeq
     disp([Prun_Thre,tret,Term_Frame,PD,q1,Mcov,Gatesq,FPPI,Upos,Uvel])
     
     Image_address=[seqFolder,filesep,'img1'];
-    file = dir(Image_address);
-    num_file = numel(file);
-    % F = num_file-2;
+    file = dir([Image_address,filesep,'*.jpg']);
+    num_file = numel(file)
+    % F = num_file;
     
     info = imfinfo([Image_address,filesep,file(3).name]);
     u_image=info(1).Height;
@@ -145,7 +146,7 @@ for ns=1:nSeq
     sceneInfo.imgHeight = u_image;sceneInfo.imgWidth = v_image;
     sceneInfo.imgFileFormat='%06d.jpg';
     sceneInfo.imgFolder=[Image_address,filesep];
-    sceneInfo.frameNums = 1:num_file-2;
+    sceneInfo.frameNums = 1:num_file;
     frameRateFile=[seqFolder,filesep,'framerate.txt'];
     try sceneInfo.frameRate = dlmread(frameRateFile);
     catch err
@@ -157,10 +158,11 @@ for ns=1:nSeq
 %     allsc=sort(detRaw(:,7));
 %     Prun_Thre=allsc(round(percentile*length(allsc)));
 %     Prun_Thre=median(detRaw(:,7));
-    disp(Prun_Thre);
+%      disp(Prun_Thre);
+    fprintf('< %f',Prun_Thre);
     
     detections=[];
-    for t=1:num_file-2
+    for t=1:num_file
         detections(t).bx=[];
         detections(t).by=[];
         detections(t).xi=[];
@@ -171,7 +173,7 @@ for ns=1:nSeq
         detections(t).ht=[];
         detections(t).sc=[];
     end
-    
+        
     for d=1:size(detRaw,1)
         t=detRaw(d,1);
         
@@ -184,6 +186,7 @@ for ns=1:nSeq
         sc=detRaw(d,7);
 %         sc(:)=1./(1+exp(-sc));
         % SCORES?
+
         
         detections(t).bx=[detections(t).bx bx];
         detections(t).by=[detections(t).by by];
@@ -206,16 +209,16 @@ for ns=1:nSeq
     
     
     %% Load images and detections
-    I=zeros(u_image,v_image,3,num_file-2,cl_image);
+    I=zeros(u_image,v_image,3,num_file,cl_image);
     % load(Detection_address)
     
-    XYZ=cell(1,num_file-2);
+    XYZ=cell(1,num_file);
     % Detection_Evaluation
     
     showdets=0;
     
     ndet=0;
-    for k=1:num_file-2
+    for k=1:num_file
         %     XYZ{1,k}=[detections(k).bx+detections(k).wd/2;detections(k).by+detections(k).ht/2]';
         XYZ{1,k}=[detections(k).xi(detections(k).sc>Prun_Thre);detections(k).yi(detections(k).sc>Prun_Thre)]';
         ndet=ndet+numel(find(detections(k).sc>Prun_Thre));
