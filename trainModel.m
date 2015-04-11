@@ -256,9 +256,9 @@ else
 	eval(cpstr);
 	
 	% 
-	submitstr=sprintf('!ssh moby \"cd research/projects/segtracking; sh submitTrain.sh %s\"',newSetting)
+	submitstr=sprintf('!ssh moby \"cd research/projects/jpda-m; sh submitTrain.sh %s\"',newSetting)
 	fprintf('submit: %s\n',newSetting)
-  	eval(submitstr);	
+%  	eval(submitstr);	
   else
     fprintf('waiting for other jobs to finish\n');
   end
