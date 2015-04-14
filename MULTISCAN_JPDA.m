@@ -96,7 +96,7 @@ if strcmp(gate_plot,'Yes')
 end
 
 for f=2:Frame
-    if ~mod(f,100),    fprintf('.'); end
+    if ~mod(f,10),    fprintf('.'); end
     ticID = tic;
     if strcmp(gate_plot,'Yes')
 %         imshow(I(:,:,:,f))

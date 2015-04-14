@@ -2,6 +2,7 @@ function convertSTInfoToTXT(stInfo, txtFile)
 % convert Anton's struct format to simple CSV file
 
 
+
 stInfo.Xi=stInfo.Xi';
 stInfo.Yi=stInfo.Yi';
 stInfo.W=stInfo.W';
@@ -25,6 +26,17 @@ if isfield(stInfo,'Xgp') && isfield(stInfo,'Ygp')
     x = stInfo.Xgp(exGT);
     y = stInfo.Ygp(exGT);
 end
+
+
+
+if size(stInfo.Xi,1)==1
+    id=id';    fr=fr';
+    bx=bx';    by=by';    wd=wd';    ht=ht';
+    if isfield(stInfo,'Xgp') && isfield(stInfo,'Ygp')
+        x=x'; y=y';
+    end
+end
+
 
 allData = [fr, id, bx, by, wd, ht, -1*ones(numBoxes,1), x,y,z];
 
