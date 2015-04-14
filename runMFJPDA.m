@@ -144,7 +144,7 @@ for ns=1:nSeq
     sceneInfo=[];
     sceneInfo.targetSize = mean(detRaw(:,5))/2;
     sceneInfo.targetAR = mean(detRaw(:,5)./detRaw(:,6));
-    sceneInfo.targetAR = 0.4;
+    sceneInfo.targetAR = 0.45;
     sceneInfo.gtAvailable=0;
     sceneInfo.imgHeight = u_image;sceneInfo.imgWidth = v_image;
     sceneInfo.imgFileFormat='%06d.jpg';
@@ -156,7 +156,7 @@ for ns=1:nSeq
         sceneInfo.frameRate = 25; fprintf('Could not determine frame rate. Setting to 25 FPS!\n');
     end
     
-    
+    Gatesq = sceneInfo.targetSize*2;
 %     percentile=0.25;
 %     allsc=sort(detRaw(:,7));
 %     Prun_Thre=allsc(round(percentile*length(allsc)));
@@ -400,27 +400,30 @@ for ns=1:nSeq
     
     
     sceneInfo.camFile=[];
-    if strcmp(seqName,'TUD-Stadtmitte')
-        sceneInfo.camFile='/home/amilan/storage/databases/TUD/tud-stadtmitte-calib.xml';
-    elseif ~isempty(strfind(seqName,'PETS'))
-        sceneInfo.camFile='/home/amilan/storage/databases/PETS2009/View_001.xml';
-    end
     
-    if ~isempty(sceneInfo.camFile)        
-        sceneInfo.camPar=parseCameraParameters(sceneInfo.camFile);
-        [stateInfo.Xgp,stateInfo.Ygp]=projectToGroundPlane(stateInfo.Xi, stateInfo.Yi, sceneInfo);
-        stateInfo.Xgp=stateInfo.Xgp./1000;         stateInfo.Ygp=stateInfo.Ygp./1000;
-    end
-    
-    if (~isempty(strfind(seqName,'TownCentre')))
-        tmpRes='tmp.txt';
-        convertSTInfoToTXT(stateInfo, tmpRes);
-%         tmpState = dlmread('tmp.txt');
-        Frames=readFramesLaura(tmpRes);
-	    namefile='maps/TownCentre-calibration.ci';
-        Frames=calib_towncentre(Frames,namefile);
-        FromFrames2TXT(Frames,tmpRes); 
-        stateInfo=convertTXTToStruct(tmpRes,seqFolder);
+    if exist('/home/amilan','dir')
+      if strcmp(seqName,'TUD-Stadtmitte')
+	  sceneInfo.camFile='/home/amilan/storage/databases/TUD/tud-stadtmitte-calib.xml';
+      elseif ~isempty(strfind(seqName,'PETS'))
+	  sceneInfo.camFile='/home/amilan/storage/databases/PETS2009/View_001.xml';
+      end
+      
+      if ~isempty(sceneInfo.camFile)        
+	  sceneInfo.camPar=parseCameraParameters(sceneInfo.camFile);
+	  [stateInfo.Xgp,stateInfo.Ygp]=projectToGroundPlane(stateInfo.Xi, stateInfo.Yi, sceneInfo);
+	  stateInfo.Xgp=stateInfo.Xgp./1000;         stateInfo.Ygp=stateInfo.Ygp./1000;
+      end
+      
+      if (~isempty(strfind(seqName,'TownCentre')))
+	  tmpRes='tmp.txt';
+	  convertSTInfoToTXT(stateInfo, tmpRes);
+  %         tmpState = dlmread('tmp.txt');
+	  Frames=readFramesLaura(tmpRes);
+	      namefile='maps/TownCentre-calibration.ci';
+	  Frames=calib_towncentre(Frames,namefile);
+	  FromFrames2TXT(Frames,tmpRes); 
+	  stateInfo=convertTXTToStruct(tmpRes,seqFolder);
+      end
     end
     
     
