@@ -241,8 +241,15 @@ for r=1:maxexper
             else
                 gtInfoAll
                 stInfo
-                [mets, mInf]=CLEAR_MOT_HUN(gtInfoAll,stInfo);
-                fprintf('*** 2D (Bounding Box overlap) ***\n'); printMetrics(mets); fprintf('\n');
+%                  [mets, mInf]=CLEAR_MOT_HUN(gtInfoAll,stInfo);
+                fprintf('*** 2D (Bounding Box overlap) ***\n'); 
+%                  
+                
+                allM = reshape([allMetsAnton.mets2d.m],14,length(allMetsAnton.mets2d))';
+		mets = fastCLEAR(allM, numel(find(gtInfoAll.Xi)),size(gtInfoAll.Xi,2),size(gtInfoAll.Xi,1));
+		printMetrics(mets); fprintf('\n');
+		
+
             end
             
             evalFile = fullfile(resdir, 'eval_anton.txt');
