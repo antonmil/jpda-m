@@ -1,4 +1,4 @@
-function [metrics2d, metrics3d, stateInfo]=runMFJPDA(sequence,options,outdir)
+% function [metrics2d, metrics3d, stateInfo]=runMFJPDA3D(sequence,options,outdir)
 
 % close all
 % clear all
@@ -12,10 +12,11 @@ stateInfo=[];
 % addpath(genpath('/home/amilan/research/projects/bmtt-dev/scripts')) % tools
 trackerName = 'MFJPDA';
 addpath(genpath('.'));
+addpath('/home/amilan/software/gurobi603/linux64/matlab');
 
 resDir = fullfile(getResDir(),trackerName,'data',filesep);
 
-
+options='config/default3d.ini';
 if ~nargin, sequence=[]; options='config/default.ini'; outdir=resDir; end
 if nargin==1, options='config/default.ini'; outdir=resDir; end
 if nargin==2, outdir=resDir; end
@@ -116,7 +117,7 @@ for ns=1:nSeq
     S_limit=50; % complexity, controls gating size
     JPDA_multiscale=param.MF; % Time-Frame windows
     N_H=param.m; % Threshold for considering maximum number of Hypotheses (m best)
-    
+
 
     % 1-Prun_Thre
     disp([Prun_Thre,tret,Term_Frame,PD,q1,Mcov,Gatesq,FPPI,Upos,Uvel])
@@ -144,7 +145,6 @@ for ns=1:nSeq
     sceneInfo=[];
     sceneInfo.targetSize = mean(detRaw(:,5))/2;
     sceneInfo.targetAR = mean(detRaw(:,5)./detRaw(:,6));
-    sceneInfo.targetAR = 0.4;
     sceneInfo.gtAvailable=0;
     sceneInfo.imgHeight = u_image;sceneInfo.imgWidth = v_image;
     sceneInfo.imgFileFormat='%06d.jpg';
@@ -187,6 +187,9 @@ for ns=1:nSeq
         xi=detRaw(d,3)+w/2;
         yi=detRaw(d,4)+h;
         sc=detRaw(d,7);
+        x=detRaw(d,8);
+        y=detRaw(d,9);
+        z=detRaw(d,10);
 %         sc(:)=1./(1+exp(-sc));
         % SCORES?
 
@@ -195,8 +198,8 @@ for ns=1:nSeq
         detections(t).by=[detections(t).by by];
         detections(t).xi=[detections(t).xi xi];
         detections(t).yi=[detections(t).yi yi];
-        detections(t).xp=[detections(t).xp xi];
-        detections(t).yp=[detections(t).yp yi];
+        detections(t).xp=[detections(t).xp x];
+        detections(t).yp=[detections(t).yp y];
         detections(t).wd=[detections(t).wd w];
         detections(t).ht=[detections(t).ht h];
         detections(t).sc=[detections(t).sc sc];
@@ -223,12 +226,12 @@ for ns=1:nSeq
     ndet=0;
     for k=1:num_file
         %     XYZ{1,k}=[detections(k).bx+detections(k).wd/2;detections(k).by+detections(k).ht/2]';
-        XYZ{1,k}=[detections(k).xi(detections(k).sc>Prun_Thre);detections(k).yi(detections(k).sc>Prun_Thre)]';
+        XYZ{1,k}=[detections(k).xp(detections(k).sc>Prun_Thre);detections(k).yp(detections(k).sc>Prun_Thre)]';
         ndet=ndet+numel(find(detections(k).sc>Prun_Thre));
         
         
-        X_D=detections(k).xi(detections(k).sc>Prun_Thre);
-        Y_D=detections(k).yi(detections(k).sc>Prun_Thre);
+        X_D=detections(k).xp(detections(k).sc>Prun_Thre);
+        Y_D=detections(k).yp(detections(k).sc>Prun_Thre);
         X_D2=detections(k).bx(detections(k).sc>Prun_Thre);
         Y_D2=detections(k).by(detections(k).sc>Prun_Thre);
         W_D2=detections(k).wd(detections(k).sc>Prun_Thre);
@@ -250,8 +253,8 @@ for ns=1:nSeq
             hold on
         end
         
-        X_F=detections(k).xi(detections(k).sc<=Prun_Thre);
-        Y_F=detections(k).yi(detections(k).sc<=Prun_Thre);
+        X_F=detections(k).xp(detections(k).sc<=Prun_Thre);
+        Y_F=detections(k).yp(detections(k).sc<=Prun_Thre);
         X_F2=detections(k).bx(detections(k).sc<=Prun_Thre);
         Y_F2=detections(k).by(detections(k).sc<=Prun_Thre);
         W_F2=detections(k).wd(detections(k).sc<=Prun_Thre);
@@ -342,8 +345,7 @@ for ns=1:nSeq
     tStart = tic;
     [XeT,PeT,Xe,Pe,Ff,Term_Con,mui]=MULTISCAN_JPDA(XYZ,F,Q,H,R,X02,P0,Tracking_Scheme,JPDA_P,N_H,...
         JPDA_multiscale,PD,S_limit,mui0,TPM,TPM_Option,H_TPM,Term_Frame,Initiation,I,'No',100);
-%     tElapsed1_i = toc(tStart) %#ok<NOPTS>
-    fprintf(1,'All done (%.2f min = %.2fh = %.2f SPF = %.2f FPS)\n',toc(tStart)/60,toc(tStart)/3600,toc(tStart)/num_file,num_file/toc(tStart));
+    tElapsed1_i = toc(tStart) %#ok<NOPTS>
     
     % [XeT,PeT,Xe,Pe,Ff,Term_Con,mui]=MULTISCAN_JPDA_CS(XYZ,WHP,F,Q,H,R,X0,P0,Tracking_Scheme,JPDA_P,N_H,...
     %     JPDA_multiscale,PD,S_limit,mui0,TPM,TPM_Option,H_TPM,Term_Frame,Initiation,I,'No',100);
@@ -374,14 +376,14 @@ for ns=1:nSeq
     
     stateInfo.X=zeros(Frame,N_T);
     stateInfo.Y=zeros(Frame,N_T);
-    stateInfo.Xi=zeros(Frame,N_T);
-    stateInfo.Yi=zeros(Frame,N_T);
+%     stateInfo.Xi=zeros(Frame,N_T);
+%     stateInfo.Yi=zeros(Frame,N_T);
     
     for n=1:N_T
         stateInfo.X(Ff{n},n)=XeT{n}(1,:);
-        stateInfo.Xi(Ff{n},n)=stateInfo.X(Ff{n},n);
+%         stateInfo.Xi(Ff{n},n)=stateInfo.X(Ff{n},n);
         stateInfo.Y(Ff{n},n)=XeT{n}(3,:);
-        stateInfo.Yi(Ff{n},n)=stateInfo.Y(Ff{n},n);
+%         stateInfo.Yi(Ff{n},n)=stateInfo.Y(Ff{n},n);
     end
     
     stateInfo.frameNums=1:Frame;
@@ -397,7 +399,7 @@ for ns=1:nSeq
     % end
     
     detections2=detections;
-    
+    stateInfo.Xgp=stateInfo.X;    stateInfo.Ygp=stateInfo.Y;
     
     sceneInfo.camFile=[];
     if strcmp(seqName,'TUD-Stadtmitte')
@@ -406,22 +408,16 @@ for ns=1:nSeq
         sceneInfo.camFile='/home/amilan/storage/databases/PETS2009/View_001.xml';
     end
     
-    if ~isempty(sceneInfo.camFile)        
+    if ~isempty(sceneInfo.camFile)
         sceneInfo.camPar=parseCameraParameters(sceneInfo.camFile);
-        [stateInfo.Xgp,stateInfo.Ygp]=projectToGroundPlane(stateInfo.Xi, stateInfo.Yi, sceneInfo);
-        stateInfo.Xgp=stateInfo.Xgp./1000;         stateInfo.Ygp=stateInfo.Ygp./1000;
+        [stateInfo.Xi,stateInfo.Yi]=projectToImage(stateInfo.X*1000,stateInfo.Y*1000,sceneInfo);
+        
+%         [stateInfo.Xgp,stateInfo.Ygp]=projectToGroundPlane(stateInfo.Xi, stateInfo.Yi, sceneInfo);
+%         stateInfo.Xgp=stateInfo.Xgp./1000;
+%         stateInfo.Ygp=stateInfo.Ygp./1000;
     end
     
-    if (~isempty(strfind(seqName,'TownCentre')))
-        tmpRes='tmp.txt';
-        convertSTInfoToTXT(stateInfo, tmpRes);
-%         tmpState = dlmread('tmp.txt');
-        Frames=readFramesLaura(tmpRes);
-	    namefile='maps/TownCentre-calibration.ci';
-        Frames=calib_towncentre(Frames,namefile);
-        FromFrames2TXT(Frames,tmpRes); 
-        stateInfo=convertTXTToStruct(tmpRes,seqFolder);
-    end
+    
     
     
     
@@ -453,26 +449,23 @@ for ns=1:nSeq
 
     if exist(gtFile,'file');
         evoptions=[];
+        
+        
 
         gtInfo = convertTXTToStruct(gtFile,seqFolder);
         gtInfo.frameNums=1:size(gtInfo.Xi,1);
 
-
         disp(seqName)
-        evoptions.eval3d=0;   % only bounding box overlap
-        evoptions.td=0.5;
         
+        evoptions.eval3d=0; evoptions.td=0.5;        
         [metrics2d,~,~]=CLEAR_MOT_HUN(gtInfo,stateInfo,evoptions);
         fprintf('*** 2D (Bounding Box overlap) ***\n'); printMetrics(metrics2d); fprintf('\n');        
+
+        evoptions.eval3d=1; evoptions.td=1;        
+        [metrics3d,~,~]=CLEAR_MOT_HUN(gtInfo,stateInfo,evoptions);
+        fprintf('*** 3D (in world coordinates) ***\n'); printMetrics(metrics3d); fprintf('\n');
         
-        if ~isempty(sceneInfo.camFile)   
-            evoptions.eval3d=1; evoptions.td=1;        
-            [metrics3d,~,~]=CLEAR_MOT_HUN(gtInfo,stateInfo,evoptions);
-            fprintf('*** 3D (in world coordinates) ***\n'); printMetrics(metrics3d); fprintf('\n');
-            
-        end
         
-%         printMetrics(metrics2d)
     end
 
     stateInfo.opt.track3d=0; stateInfo.opt.cutToTA=0;

@@ -13,7 +13,7 @@ X=stateInfo.X; Y=stateInfo.Y;
 W=zeros(size(X));
 H=zeros(size(Y));
 
-framesPerNcps=10;
+framesPerNcps=50;
  warning('off','MATLAB:rankDeficientMatrix');
 for id=1:N
 
@@ -219,6 +219,14 @@ stateInfo.W(isnanW)=mean(stateInfo.W(isnumW));
 % more numerical issues
 stateInfo.H=real(stateInfo.H);
 stateInfo.W=real(stateInfo.W);
+
+% make sure its right orientation
+if N==1
+    stateInfo.Xi=reshape(stateInfo.Xi,F,N);
+    stateInfo.Yi=reshape(stateInfo.Yi,F,N);
+    stateInfo.W=reshape(stateInfo.W,F,N);
+    stateInfo.H=reshape(stateInfo.H,F,N);
+end
     
  warning('on','MATLAB:rankDeficientMatrix');
 end
