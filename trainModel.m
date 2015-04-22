@@ -130,6 +130,8 @@ else
             % fix range
             if strcmp(key,'PD')
                 params(k)=max(params(k),0.5);params(k)=min(params(k),0.99);
+            elseif strcmp(key,'AR')
+                params(k) = max(0.2,params(k));param.AR = min(0.5,params(k));
             elseif strcmp(key,'tret') || strcmp(key,'Term_Frame')
                 params(k)=round(params(k));
             end
