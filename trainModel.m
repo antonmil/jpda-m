@@ -259,7 +259,7 @@ fprintf('%d other jobs still running\n',rjobs);
 if rjobs==0
     try
         fid=fopen('alltraining.txt','a');
-        fprintf(fid,'%s\t%s\t%.1f\n',datestr(now),settingsDir,bestmota);
+        fprintf(fid,'%s\t%s\t%.1f (%d)\n',datestr(now),settingsDir,bestmota,bestexper);
         fclose(fid);
     catch
     end
