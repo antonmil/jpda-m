@@ -176,6 +176,7 @@ else
 	      [metrics2d, metrics3d, stateInfo]=runMFJPDA(char(scen),conffile);
 	    catch err2
 	    fprintf('Tracking failed: %s\n',err2.message);
+        error('failure');
 	      metrics2d=zeros(1,14);
 	      metrics3d=zeros(1,14);
 	      

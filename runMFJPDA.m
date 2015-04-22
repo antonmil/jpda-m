@@ -141,6 +141,12 @@ for ns=1:nSeq
     fprintf('Loading detections...');
     [detFolder, detFile]=getDetInfo(seqName,dataDir);
     detRaw=dlmread(detFile);
+    
+    % super quick and dirty hack
+    if (strcmp(seqName,'ETH-Pedcross2'))
+        detRaw=[1,-1,155,265,26,59,2.0863,-1,-1,-1; detRaw];
+    end
+    
     sceneInfo=[];
     sceneInfo.targetSize = mean(detRaw(:,5))/2;
     sceneInfo.targetAR = mean(detRaw(:,5)./detRaw(:,6));
