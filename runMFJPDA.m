@@ -113,7 +113,7 @@ for ns=1:nSeq
     Upos=param.Upos; % uncertainty in initial position
     Uvel=param.Uvel; % uncertainty in initial velocity
     T=1;% Temporal sampling rate    
-    S_limit=50; % complexity, controls gating size
+    S_limit=100; % complexity, controls gating size
     JPDA_multiscale=param.MF; % Time-Frame windows
     N_H=param.m; % Threshold for considering maximum number of Hypotheses (m best)
     
@@ -138,7 +138,7 @@ for ns=1:nSeq
     
     
     
-    disp('Loading detections...');
+    fprintf('Loading detections...');
     [detFolder, detFile]=getDetInfo(seqName,dataDir);
     detRaw=dlmread(detFile);
     sceneInfo=[];

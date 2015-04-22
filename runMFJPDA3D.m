@@ -12,7 +12,6 @@ stateInfo=[];
 % addpath(genpath('/home/amilan/research/projects/bmtt-dev/scripts')) % tools
 trackerName = 'MFJPDA';
 addpath(genpath('.'));
-addpath('/home/amilan/software/gurobi603/linux64/matlab');
 
 resDir = fullfile(getResDir(),trackerName,'data',filesep);
 

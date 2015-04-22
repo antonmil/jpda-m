@@ -13,7 +13,7 @@ X=stateInfo.X; Y=stateInfo.Y;
 W=zeros(size(X));
 H=zeros(size(Y));
 
-framesPerNcps=50;
+framesPerNcps=10;
  warning('off','MATLAB:rankDeficientMatrix');
 for id=1:N
 
