@@ -413,28 +413,28 @@ for ns=1:nSeq
     sceneInfo.camFile=[];
     
     if exist('/home/amilan','dir')
-      if strcmp(seqName,'TUD-Stadtmitte')
-	  sceneInfo.camFile='/home/amilan/storage/databases/TUD/tud-stadtmitte-calib.xml';
-      elseif ~isempty(strfind(seqName,'PETS'))
-	  sceneInfo.camFile='/home/amilan/storage/databases/PETS2009/View_001.xml';
-      end
-      
-      if ~isempty(sceneInfo.camFile)        
-	  sceneInfo.camPar=parseCameraParameters(sceneInfo.camFile);
-	  [stateInfo.Xgp,stateInfo.Ygp]=projectToGroundPlane(stateInfo.Xi, stateInfo.Yi, sceneInfo);
-	  stateInfo.Xgp=stateInfo.Xgp./1000;         stateInfo.Ygp=stateInfo.Ygp./1000;
-      end
-      
-      if (~isempty(strfind(seqName,'TownCentre')))
-	  tmpRes='tmp.txt';
-	  convertSTInfoToTXT(stateInfo, tmpRes);
-  %         tmpState = dlmread('tmp.txt');
-	  Frames=readFramesLaura(tmpRes);
-	      namefile='maps/TownCentre-calibration.ci';
-	  Frames=calib_towncentre(Frames,namefile);
-	  FromFrames2TXT(Frames,tmpRes); 
-	  stateInfo=convertTXTToStruct(tmpRes,seqFolder);
-      end
+%       if strcmp(seqName,'TUD-Stadtmitte')
+% 	  sceneInfo.camFile='/home/amilan/storage/databases/TUD/tud-stadtmitte-calib.xml';
+%       elseif ~isempty(strfind(seqName,'PETS'))
+% 	  sceneInfo.camFile='/home/amilan/storage/databases/PETS2009/View_001.xml';
+%       end
+%       
+%       if ~isempty(sceneInfo.camFile)        
+% 	  sceneInfo.camPar=parseCameraParameters(sceneInfo.camFile);
+% 	  [stateInfo.Xgp,stateInfo.Ygp]=projectToGroundPlane(stateInfo.Xi, stateInfo.Yi, sceneInfo);
+% 	  stateInfo.Xgp=stateInfo.Xgp./1000;         stateInfo.Ygp=stateInfo.Ygp./1000;
+%       end
+%       
+%       if (~isempty(strfind(seqName,'TownCentre')))
+% 	  tmpRes='tmp.txt';
+% 	  convertSTInfoToTXT(stateInfo, tmpRes);
+%   %         tmpState = dlmread('tmp.txt');
+% 	  Frames=readFramesLaura(tmpRes);
+% 	      namefile='maps/TownCentre-calibration.ci';
+% 	  Frames=calib_towncentre(Frames,namefile);
+% 	  FromFrames2TXT(Frames,tmpRes); 
+% 	  stateInfo=convertTXTToStruct(tmpRes,seqFolder);
+%       end
     end
     
     
