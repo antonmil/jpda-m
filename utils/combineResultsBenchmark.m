@@ -1,4 +1,4 @@
-function mr=combineResultsBenchmark(jobname,jobid,maxexper)
+function [mr,mm]=combineResultsBenchmark(jobname,jobid,maxexper)
 
 if nargin<2
     maxexper=20;
