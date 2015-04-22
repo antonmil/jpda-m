@@ -117,10 +117,11 @@ for ns=1:nSeq
     JPDA_multiscale=param.MF; % Time-Frame windows
     N_H=param.m; % Threshold for considering maximum number of Hypotheses (m best)
     AR=param.AR;
+    fpn=param.fpn;
     
 
     % 1-Prun_Thre
-    disp([Prun_Thre,tret,Term_Frame,PD,q1,Mcov,Gatesq,FPPI,Upos,Uvel,AR])
+    disp([Prun_Thre,tret,Term_Frame,PD,q1,Mcov,Gatesq,FPPI,Upos,Uvel,AR,fpn])
     
     Image_address=[seqFolder,filesep,'img1'];
     file = dir([Image_address,filesep,'*.jpg']);
@@ -153,6 +154,7 @@ for ns=1:nSeq
     sceneInfo.targetAR = mean(detRaw(:,5)./detRaw(:,6));
 %     sceneInfo.targetAR = 0.45;
     sceneInfo.targetAR = param.AR;
+    sceneInfo.fpn = param.fpn;
 
     sceneInfo.gtAvailable=0;
     sceneInfo.imgHeight = u_image;sceneInfo.imgWidth = v_image;

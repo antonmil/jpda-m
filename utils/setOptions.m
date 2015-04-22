@@ -10,6 +10,8 @@ param.Mcov = 7;
 
 param.AR = .45;
 
+param.fpn=10;
+
 if isempty(options)    
     return;
 end
@@ -33,3 +35,6 @@ param.m = options.Parameters.m;
 
 param.AR = options.Parameters.AR;
 param.AR = max(0.2,param.AR);param.AR = min(0.5,param.AR);
+
+param.fpn = options.Parameters.fpn;
+% param.fpn = max(1,param.fpn);param.fpn = min(100,param.fpn);

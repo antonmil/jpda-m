@@ -13,7 +13,7 @@ X=stateInfo.X; Y=stateInfo.Y;
 W=zeros(size(X));
 H=zeros(size(Y));
 
-framesPerNcps=10;
+framesPerNcps=sceneInfo.fpn;
  warning('off','MATLAB:rankDeficientMatrix');
 for id=1:N
 
