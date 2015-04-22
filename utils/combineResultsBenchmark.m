@@ -26,8 +26,13 @@ end
 
 eval3d=0;
 
-
-load(sprintf('%s/%s',resdir,resfiles(1).name));
+% another dirty hack because of read/write conflict
+try 
+    load(sprintf('%s/%s',resdir,resfiles(1).name));
+catch
+    pause(5)
+    load(sprintf('%s/%s',resdir,resfiles(1).name));
+end
 %  allscen=find(mets2d(:,1))';
 
 
