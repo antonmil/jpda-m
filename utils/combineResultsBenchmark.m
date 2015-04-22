@@ -77,7 +77,13 @@ for r=1:maxexper
     fprintf('Experiment: %d\n',r);
     resfile=sprintf('%s/res_%03d.mat',resdir,r);
     if exist(resfile,'file')
-        load(resfile);
+        
+        try 
+            load(resfile);
+        catch
+            pause(5)
+            load(resfile);
+        end
 
         fprintf('*** 2D (Bounding Box overlap) ***\n');
 
