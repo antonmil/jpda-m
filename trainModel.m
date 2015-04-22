@@ -278,19 +278,22 @@ else
         newSetting=sprintf('%s-%d',runname,learniter+1)
         newConfdir=sprintf('config/%s',newSetting)
         cpstr=sprintf('!cp -R %s %s',confdir,newConfdir)
-        fprintf('copy config dir\n');
-        eval(cpstr);
-        
-        % copy relevant config into first one
-        conffile=sprintf('%s/%04d.ini',confdir,bestexper)
-        cpstr=sprintf('!cp %s %s/0001.ini',conffile,newConfdir)
-        fprintf('copy best config file');
-        eval(cpstr);
-        
-        %
-        submitstr=sprintf('!ssh moby \"cd research/projects/jpda-m; sh submitTrain.sh %s\"',newSetting)
-        fprintf('submit: %s\n',newSetting)
-        eval(submitstr);
+        if ~exist(newConfdir,'dir')
+            fprintf('new dir does not exist. Go ahead\n');
+            fprintf('copy config dir\n');
+            eval(cpstr);
+
+            % copy relevant config into first one
+            conffile=sprintf('%s/%04d.ini',confdir,bestexper)
+            cpstr=sprintf('!cp %s %s/0001.ini',conffile,newConfdir)
+            fprintf('copy best config file');
+            eval(cpstr);
+
+            %
+            submitstr=sprintf('!ssh moby \"cd research/projects/jpda-m; sh submitTrain.sh %s\"',newSetting)
+            fprintf('submit: %s\n',newSetting)
+            eval(submitstr);
+        end
     else
         fprintf('waiting for other jobs to finish\n');
     end
