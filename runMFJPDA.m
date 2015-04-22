@@ -116,10 +116,11 @@ for ns=1:nSeq
     S_limit=100; % complexity, controls gating size
     JPDA_multiscale=param.MF; % Time-Frame windows
     N_H=param.m; % Threshold for considering maximum number of Hypotheses (m best)
+    AR=param.AR;
     
 
     % 1-Prun_Thre
-    disp([Prun_Thre,tret,Term_Frame,PD,q1,Mcov,Gatesq,FPPI,Upos,Uvel])
+    disp([Prun_Thre,tret,Term_Frame,PD,q1,Mcov,Gatesq,FPPI,Upos,Uvel,AR])
     
     Image_address=[seqFolder,filesep,'img1'];
     file = dir([Image_address,filesep,'*.jpg']);
@@ -150,7 +151,9 @@ for ns=1:nSeq
     sceneInfo=[];
     sceneInfo.targetSize = mean(detRaw(:,5))/2;
     sceneInfo.targetAR = mean(detRaw(:,5)./detRaw(:,6));
-    sceneInfo.targetAR = 0.45;
+%     sceneInfo.targetAR = 0.45;
+    sceneInfo.targetAR = param.AR;
+
     sceneInfo.gtAvailable=0;
     sceneInfo.imgHeight = u_image;sceneInfo.imgWidth = v_image;
     sceneInfo.imgFileFormat='%06d.jpg';

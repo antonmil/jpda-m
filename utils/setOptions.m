@@ -8,6 +8,8 @@ param.PD = 0.89;
 param.q1 = .5;
 param.Mcov = 7;
 
+param.AR = .45;
+
 if isempty(options)    
     return;
 end
@@ -28,3 +30,5 @@ param.Uvel=options.Parameters.Uvel; % uncertainty in initial velocity
 
 param.MF = options.Parameters.MF;
 param.m = options.Parameters.m;
+
+param.AR = options.Parameters.AR;
