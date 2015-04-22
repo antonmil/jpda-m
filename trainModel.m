@@ -222,8 +222,9 @@ end
 % evaluate what we have so far
 % bestexper=combineResultsRemote(settingsDir);
 bestexper=combineResultsBenchmark(settingsDir,jobid,maxexper);
+dlmwrite(sprintf('%s/done_%03d.txt',resdir,jobid));
 
-resfiles=dir(sprintf('%s/res_*.txt',resdir))
+resfiles=dir(sprintf('%s/done_*.txt',resdir))
 fprintf('done %d experiments\n',length(resfiles));
 
 % querystring=sprintf('qstat -t | grep %s | wc -l',settingsDir)
