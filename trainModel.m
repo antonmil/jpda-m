@@ -87,20 +87,25 @@ else
         sec='Parameters';
         keys = ini.GetKeys(sec);
         
+        pertind=zeros(1,length(keys));
         for k=1:length(keys)
             key=char(keys{k});
             %params = setfield(params,key,ini.GetValues(sec,key));
             
             % if search parameter not in parameter list at all, ignore
-            if ~ismember(key,fieldnames(opt.Parameters))
-                continue;
+%             if ~ismember(key,fieldnames(opt.Parameters))
+%                 continue;
+%             end
+%             if ~ismember(key,searchspace)
+%                 continue;
+%             end
+            if ismember(key,searchspace)
+                pertind(k)=0;
             end
-            if ~ismember(key,searchspace)
-                continue;
-            end
-            
             params = [params ini.GetValues(sec,key)];
         end
+        
+%         porig=params;
         
         rnmeans = params; % mean values are the starting point
         rmvars = rnmeans ./ 10; % variance is one tenth
@@ -110,6 +115,10 @@ else
         else
             params = abs(rnmeans + rmvars .* randn(1,length(rnmeans))); % normal sampling
         end
+        
+        replpar=find(pertind);
+%         porig(replpar)=param(replpar);
+%         params=
         
         
         for k=1:length(keys)
