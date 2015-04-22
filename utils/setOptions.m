@@ -32,3 +32,4 @@ param.MF = options.Parameters.MF;
 param.m = options.Parameters.m;
 
 param.AR = options.Parameters.AR;
+param.AR = max(0.2,param.AR);param.AR = min(0.5,param.AR);
