@@ -220,17 +220,17 @@ end
 %%
 % evaluate what we have so far
 % bestexper=combineResultsRemote(settingsDir);
-bestexper=combineResultsBenchmark(settingsDir,maxexper);
+bestexper=combineResultsBenchmark(settingsDir,jobid,maxexper);
 
-resfiles=dir(sprintf('%s/res_*.mat',resdir))
+resfiles=dir(sprintf('%s/res_*.txt',resdir))
 fprintf('done %d experiments\n',length(resfiles));
 
-querystring=sprintf('qstat -t | grep %s | wc -l',settingsDir)
-[rs,rjobs] = system(querystring) 
-rjobs=str2double(rjobs)-1; % subtract currently running
-
-
-fprintf('%d other jobs still running\n',rjobs);
+% querystring=sprintf('qstat -t | grep %s | wc -l',settingsDir)
+% [rs,rjobs] = system(querystring) 
+% rjobs=str2double(rjobs)-1; % subtract currently running
+% 
+% 
+% fprintf('%d other jobs still running\n',rjobs);
 
 rjobs = maxexper-length(resfiles);
 fprintf('%d other jobs still running\n',rjobs);
@@ -241,10 +241,10 @@ if bestexper==1 && length(resfiles)==maxexper
 	fprintf('Training Done!');
 else
 %   if rjobs<=0
-  if length(resfiles) == maxexper
+  if rjobs==0
 	fprintf('resubmitting ... \n');
     runname
-    if isstr(learniter), learniter=str2double(learniter); end
+    if ischar(learniter), learniter=str2double(learniter); end
 	newSetting=sprintf('%s-%d',runname,learniter+1)	
 	newConfdir=sprintf('config/%s',newSetting)
 	cpstr=sprintf('!cp -R %s %s',confdir,newConfdir)
@@ -260,7 +260,7 @@ else
 	% 
 	submitstr=sprintf('!ssh moby \"cd research/projects/jpda-m; sh submitTrain.sh %s\"',newSetting)
 	fprintf('submit: %s\n',newSetting)
-%  	eval(submitstr);	
+  	eval(submitstr);	
   else
     fprintf('waiting for other jobs to finish\n');
   end
