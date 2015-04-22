@@ -240,7 +240,7 @@ end
 % evaluate what we have so far
 % bestexper=combineResultsRemote(settingsDir);
 [bestexper,bestmota]=combineResultsBenchmark(settingsDir,jobid,maxexper);
-dlmwrite(sprintf('%s/done_%03d.txt',resdir,jobid));
+dlmwrite(sprintf('%s/done_%03d.txt',resdir,jobid),1);
 
 resfiles=dir(sprintf('%s/done_*.txt',resdir))
 fprintf('done %d experiments\n',length(resfiles));
