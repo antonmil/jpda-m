@@ -195,6 +195,7 @@ maxwidth=max([detections(:).wd]);
 stateInfo.W(stateInfo.W>maxwidth)=maxwidth;
 
 % clean up mess
+% save('tmp.mat','stateInfo','*');
 X(find(isnan(X)))=0;
 stateInfo.W(~X)=0; stateInfo.H(~X)=0;
 

@@ -403,7 +403,14 @@ for ns=1:nSeq
         stateInfo.Y(Ff{n},n)=XeT{n}(3,:);
         stateInfo.Yi(Ff{n},n)=stateInfo.Y(Ff{n},n);
     end
-    
+	
+	% strange bug?
+    stateInfo.X(isnan(stateInfo.X))=0;
+	stateInfo.Y(isnan(stateInfo.Y))=0;
+	stateInfo.Xi(isnan(stateInfo.Xi))=0;
+	stateInfo.Yi(isnan(stateInfo.Yi))=0;
+	
+	
     stateInfo.frameNums=1:Frame;
     
     % if strcmp(S_Name,'S2')&&strcmp(L_Name,'L2')
@@ -447,7 +454,7 @@ for ns=1:nSeq
     end
     
     
-    
+    % save('tmp1.mat','*');
     stateInfo=getBBoxesFromState(stateInfo,Ff,detections2,sceneInfo);
     % save([pwd,'\Results\Tracking_results_',S_Name,L_Name],'I','XeT','Ff','stateInfo','sceneInfo')
     
@@ -485,6 +492,7 @@ for ns=1:nSeq
         evoptions.eval3d=0;   % only bounding box overlap
         evoptions.td=0.5;
         
+		% save('tmp2.mat','*');
         [metrics2d,~,~]=CLEAR_MOT_HUN(gtInfo,stateInfo,evoptions);
         fprintf('*** 2D (Bounding Box overlap) ***\n'); printMetrics(metrics2d); fprintf('\n');
         
