@@ -21,7 +21,9 @@ stateInfo=[];
 
 % addpath(genpath('/home/amilan/research/projects/bmtt-dev/scripts')) % tools
 trackerName = 'JIPDA';
-addpath(genpath('..'));
+addpath(genpath('../utils'))
+addpath(genpath('../external'))
+%  pathdef;
 
 
 resDir = fullfile(getResDir(),trackerName,'data',filesep);
@@ -96,7 +98,7 @@ for ns=1:nSeq
     Detection_address=[seqFolder,filesep,'det/det.txt'];
     
     
-    file = dir(Image_address);
+    file = dir([Image_address,filesep,'*.jpg']);        
     num_file = numel(file);
     
     info = imfinfo([Image_address,filesep,file(3).name]);
@@ -105,7 +107,7 @@ for ns=1:nSeq
     cl_image=class(imread([Image_address,filesep,file(3).name]));
     
     %% Load images and detections
-    I=zeros(u_image,v_image,3,num_file-2,cl_image);
+    I=zeros(u_image,v_image,3,num_file,cl_image);
     % load(Detection_address)
     fprintf('Loading detections...');
     [detFolder, detFile]=getDetInfo(seqName,dataDir);
@@ -186,7 +188,7 @@ for ns=1:nSeq
     
     
     
-    XYZ=cell(1,num_file-2);
+    XYZ=cell(1,num_file);
     % Detection_Evaluation
     
     showdets=0;
@@ -195,7 +197,7 @@ for ns=1:nSeq
     
     % figure,
     ndet=0;
-    for k=1:num_file-2
+    for k=1:num_file
         %     XYZ{1,k}=[detections(k).bx+detections(k).wd/2;detections(k).by+detections(k).ht/2]';
         XYZ{1,k}=[detections(k).xi(detections(k).sc>Prun_Thre);detections(k).yi(detections(k).sc>Prun_Thre)]';
         ndet=ndet+numel(find(detections(k).sc>Prun_Thre));
@@ -474,7 +476,7 @@ for ns=1:nSeq
     
     if exist(gtFile,'file');
         evoptions=[];
-        
+%          stateInfo
         gtInfo = convertTXTToStruct(gtFile,seqFolder);
         gtInfo.frameNums=1:size(gtInfo.Xi,1);
         

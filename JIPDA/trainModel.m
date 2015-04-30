@@ -3,8 +3,9 @@ function trainModel(jobname,jobid,maxexper)
 %% determine paths for config, logs, etc...
 % addpath(genpath('./motutils/'));
 format compact
-addpath(genpath('utils'))
-addpath(genpath('external'))
+addpath(genpath('../utils'))
+addpath(genpath('../external'))
+%  addpath(genpath('..'));
 
 settingsDir=strsplit(jobname,'-');
 runname=char(settingsDir{1})
