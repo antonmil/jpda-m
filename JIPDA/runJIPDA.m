@@ -61,7 +61,7 @@ for ns=1:nSeq
     
 
     fR=getFrameRate(seqName);
-    param=setOptions(options,fR); % set custom params
+    param=setOptionsJIPDA(options,fR); % set custom params
 
     Prun_Thre = param.Prun_Thre;
     tret = param.tret;
@@ -292,17 +292,39 @@ for ns=1:nSeq
     %%%%%%%%%%%%%%
     % JIPDA Parameters
     % sum = 1
-    Pdnt0=[0.65;0.009;0.341];  % existing;  ex+missed; terminated, sums to 1
+    
+    
+%     Pdnt0=[0.65;0.009;0.341];  % existing;  ex+missed; terminated, sums to 1
     
     % sum of columns < 1
-    TPM_dnt=[0.59, 0.49, 0; %   exist and remains,      exist -> occluded,      terminated
-        0.409, 0.5, 0]; %       occlusion -> visible,   occlusion -> occlusion, terminated
+%     TPM_dnt=[0.59, 0.49, 0; %   exist and remains,      exist -> occluded,      terminated
+%         0.409, 0.5, 0]; %       occlusion -> visible,   occlusion -> occlusion, terminated
     
     % This is sensitive. Controls occlusion / misdetection spans
     % higher conf. prob. avoids more trajectories
     % higher term. prob. terminates easier
     % conf < term, both < 1
-    Term_tre=[0.4 0.5]; % The probabilities for track confirmation and termination
+%     Term_tre=[0.4 0.5]; % The probabilities for track confirmation and termination
+
+    Pdnt0=[
+    param.Pexist;
+    param.Pexmissed;
+    param.Pterm;];
+
+    p1=param.TPM1;
+    p2=param.TPM2;
+    p3=param.TPM3;
+    p4=param.TPM4;
+    p5=param.TPM5;
+    p6=param.TPM6;
+
+    TPM_dnt=param.TPM_dnt;
+
+    Term_tre=param.Term_tre;
+
+%     [Pdnt0, TPM_dnt, Term_tre]=setProbVec(param);    
+    disp([Pdnt0',TPM_dnt(:)',Term_tre]);
+    
     %%%%%%%%%%%%%%
     
     % PD Parameters
