@@ -12,6 +12,6 @@ echo ${PBS_JOBID}
 echo $PBS_JOBNAME
 
 # last parameter = max number of experiments for each learning iteration
-matlab -nodesktop -nosplash -r "trainModel('$PBS_JOBNAME','$PBS_ARRAYID',20)"
+matlab -nodesktop -nosplash -r "trainModel('$PBS_JOBNAME','$PBS_ARRAYID',99)"
 
 

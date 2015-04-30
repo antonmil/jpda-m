@@ -167,7 +167,7 @@ for ns=1:nSeq
         sceneInfo.frameRate = 25; fprintf('Could not determine frame rate. Setting to 25 FPS!\n');
     end
     
-    Gatesq = sceneInfo.targetSize*2;
+    Gatesq = sceneInfo.targetSize*3;
 %     percentile=0.25;
 %     allsc=sort(detRaw(:,7));
 %     Prun_Thre=allsc(round(percentile*length(allsc)));
