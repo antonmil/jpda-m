@@ -17,6 +17,7 @@ catch err
 %     default options
     fprintf('Error parsing options: %s\n',err.message);
     fprintf('Using defaults\n');
-    options=[];
+%     options=[];
+    options=readConfig('./config/default.ini');
 
 end

@@ -5,7 +5,7 @@ if nargin~=24
     error('Not enough inputs. Please check your inputs')
 end
 
-hwait = waitbar(0,'Background Extraction');
+% hwait = waitbar(0,'Background Extraction');
 elapsedTime=inf;
 
 
@@ -88,7 +88,7 @@ Terminated_objects_index=[];
 
 
 %************************ Kalman Filter Tracking **************************
-waitbar((1)/(Frame),hwait,['Frame # ',num2str(1),'   Estimated time: ',num2str((Frame-1)*elapsedTime),' s'])
+% waitbar((1)/(Frame),hwait,['Frame # ',num2str(1),'   Estimated time: ',num2str((Frame-1)*elapsedTime),' s'])
 if strcmp(trk_plot,'Yes')
     Im_dim=ndims(I);
     cln(1:Im_dim-1) = {':'};
@@ -97,6 +97,7 @@ if strcmp(trk_plot,'Yes')
 end
 
 for f=2:Frame
+    if ~mod(f,10),    fprintf('.'); end
     ticID = tic;
         if strcmp(trk_plot,'Yes')
             cln(Im_dim)= {f};
@@ -325,8 +326,8 @@ for f=2:Frame
         end
     end
     elapsedTime = toc(ticID);
-    waitbar((f)/(Frame),hwait,['Frame # ',num2str(f),'   Estimated time: ',num2str(round((Frame-f)*elapsedTime)),' s (',...
-        num2str(round(elapsedTime)),' Sec/Frame)'])
+%     waitbar((f)/(Frame),hwait,['Frame # ',num2str(f),'   Estimated time: ',num2str(round((Frame-f)*elapsedTime)),' s (',...
+%         num2str(round(elapsedTime)),' Sec/Frame)'])
 end
-close(hwait)
+% close(hwait)
 
