@@ -1,4 +1,5 @@
 %% Run once on TEST
+function runTest(conffile)
 resDir='res/test';
 logDir='logs';
 logFile=[logDir,filesep,sprintf('test.log')];
@@ -29,8 +30,13 @@ allseq={
     'KITTI-19',...
     'Venice-1',...
     };
+
+if nargin<1
+    conffile='config/default.ini';
+end
+
 for seq=allseq
-    [m2d,m3d,stateInfo]=runMFJPDA(char(seq),'config/0422Ae-1/0001.ini',resDir);
+    [m2d,m3d,stateInfo]=runMFJPDA(char(seq),conffile,resDir);
 end
 
 %%
