@@ -191,7 +191,7 @@ for ns=1:nSeq
     XYZ=cell(1,num_file);
     % Detection_Evaluation
     
-    showdets=0;
+    showdets=1;
     
     
     
@@ -209,7 +209,7 @@ for ns=1:nSeq
         H_D2=detections(k).ht(detections(k).sc>Prun_Thre);
         
         if showdets
-            filename = strcat([Image_address,filesep],file(k+2).name);
+            filename = strcat([Image_address,filesep],file(k).name);
             I(:,:,:,k) = imread(filename);
             
             imshow(I(:,:,:,k)),
@@ -232,6 +232,14 @@ for ns=1:nSeq
         H_F2=detections(k).ht(detections(k).sc<=Prun_Thre);
         
         if showdets
+            
+            gtFile = fullfile(GT_address);
+    
+            gtInfo = convertTXTToStruct(gtFile,seqFolder);
+            gtInfo.frameNums=1:size(gtInfo.Xi,1);
+        
+
+        
             plot(X_F,Y_F,'or')
             hold on
             for jj=1:size(X_F,2)
@@ -309,16 +317,10 @@ for ns=1:nSeq
 %     Term_tre=[0.4 0.5]; % The probabilities for track confirmation and termination
 
     Pdnt0=[
-    param.Pexist;
-    param.Pexmissed;
-    param.Pterm;];
+        param.Pexist;
+        param.Pexmissed;
+        param.Pterm;];
 
-    p1=param.TPM1;
-    p2=param.TPM2;
-    p3=param.TPM3;
-    p4=param.TPM4;
-    p5=param.TPM5;
-    p6=param.TPM6;
 
     TPM_dnt=param.TPM_dnt;
 
@@ -348,7 +350,7 @@ for ns=1:nSeq
     P0=blkdiag([Upos 0;0 Uvel],[Upos 0;0 Uvel]);
     
     % visualization parameters
-    trk_plt='No';
+    trk_plt='Yes';
     vis_par=[10 20 100]; %[tail w_box h_box]
     
     % gtInfo2=gtInfo;
@@ -360,7 +362,7 @@ for ns=1:nSeq
     [XeT,PeT,Xe,Pe,Ff,P_dnt_T,ten_cnf_ter,mui]=MULTISCAN_JIPDA(XYZ,F,Q,H,R,X02,P0,Tracking_Scheme,JPDA_P,N_H,...
         JPDA_multiscale,PD,S_limit,mui0,TPM,TPM_Option,H_TPM,Pdnt0,TPM_dnt,Term_tre,Initiation,I,trk_plt,vis_par);
 %     tElapsed1_i = toc(tStart) %#ok<NOPTS>
-    fprintf(1,'All done (%.2f min = %.2fh = %.2f SPF = %.2f FPS)\n',toc(tStart)/60,toc(tStart)/3600,toc(tStart)/num_file,num_file/toc(tStart));
+    fprintf('\nAll done (%.2f min = %.2fh = %.2f SPF = %.2f FPS)\n',toc(tStart)/60,toc(tStart)/3600,toc(tStart)/num_file,num_file/toc(tStart));
     
     %% Post-processing (post processing and Removing tracks with smal life spans)
     conf_trk=cell2mat(cellfun(@(x) any(x==1), ten_cnf_ter, 'UniformOutput', false));

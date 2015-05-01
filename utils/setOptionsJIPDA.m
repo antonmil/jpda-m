@@ -77,9 +77,9 @@ p5=param.TPM5; p5=max(0,min(p5,1));
 p6=param.TPM6; p6=max(0,min(p6,1));
 
 tiny=0.1;
-s1=p1+p2; if s1>=1, p1=p1/s1- tiny; p2=p2-tiny; end
-s2=p3+p4; if s2>=1, p3=p3/s2- tiny; p4=p4-tiny; end
-s3=p5+p6; if s3>=1, p5=p5/s3- tiny; p6=p6-tiny; end
+s1=p1+p2; if s1>=1, p1=p1/s1- tiny; p2=p2/s1-tiny; end
+s2=p3+p4; if s2>=1, p3=p3/s2- tiny; p4=p4/s2-tiny; end
+s3=p5+p6; if s3>=1, p5=p5/s3- tiny; p6=p6/s3-tiny; end
 
 param.TPM_dnt=[
     p1,p3,p5;
@@ -90,7 +90,7 @@ p1=options.Parameters.Term_tre1; p1=max(0,min(p1,1));
 p2=options.Parameters.Term_tre2; p2=max(0,min(p2,1));
 
 if p1>=p2, p1=p2-tiny; end
-s1=p1+p2; if s1>=1, p1=p1/s1- tiny; p2=p2-tiny; end
+s1=p1+p2; if s1>=1, p1=p1/s1- tiny; p2=p2/s1-tiny; end
 param.Term_tre=[p1,p2];
 
 %     Term_tre=[0.4 0.5]; % The probabilities for track confirmation and termination

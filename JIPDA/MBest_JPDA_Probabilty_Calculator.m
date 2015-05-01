@@ -61,9 +61,9 @@ end
 % A=sparse(A); 
 % Aeq = sparse(Aeq);
 options = optimoptions('intlinprog','Display','off','CutGeneration','none','BranchingRule','mostfractional');
-tic
+% tic
 [candidates, values] = BinIntMBest(f,A,b,Aeq,beq,options,N);
-fprintf('NFramework');
+fprintf('o');
 for hc=1:length(values)
     x2 = candidates(:,hc);
     f_prr=exp(-x2'*f);
@@ -72,7 +72,7 @@ for hc=1:length(values)
      F_Pr{1,nn}(logical(x2(Edge_vec0{nn})),1)=F_Pr{1,nn}(logical(x2(Edge_vec0{nn})),1)+f_prr;
     end
 end
-toc
+% toc;
 % tends = zeros(1,N);
 % tic
 % hc=1;
