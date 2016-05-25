@@ -12,3 +12,7 @@ if exist('/home/h3','dir')
 	dataDir='/home/h3/amilan/storage/databases/2DMOT2015/train/';
 end
 
+if exist('/home/milan','dir')
+	dataDir='/home/milan/storage/databases/2DMOT2015/train/';
+end
+
